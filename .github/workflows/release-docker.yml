@@ -1,4 +1,4 @@
-name: CI
+name: Release Docker images
 on:
   push:
     branches:
@@ -16,11 +16,11 @@ jobs:
           go-version: '^1.16.0'
       - name: Install buildx
         run: |
-          sudo apt update
+          sudo apt-get update
           sudo apt-get install -y binfmt-support qemu-user-static jq
           mkdir -p ~/.docker/cli-plugins
           BUILDX_URL=$(curl https://api.github.com/repos/docker/buildx/releases/latest | jq -r .assets[].browser_download_url | grep amd64)
-          wget $BUILDX_URL -O ~/.docker/cli-plugins/docker-build
+          wget $BUILDX_URL -O ~/.docker/cli-plugins/docker-buildx
           chmod +x ~/.docker/cli-plugins/docker-buildx
           docker buildx create --name xbuilder
           docker buildx use xbuilder
