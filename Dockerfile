@@ -1,7 +1,7 @@
 #
 # BUILD ENVIRONMENT
 # -----------------
-ARG GO_VERSION
+ARG GO_VERSION=1.16
 FROM golang:${GO_VERSION} as builder
 
 RUN apt-get -y update && apt-get -y install upx

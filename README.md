@@ -1,7 +1,7 @@
 # Etcd Cluster Operator
 
-![Go Report Card](https://goreportcard.com/badge/github.com/improbable-eng/etcd-cluster-operator)
-[![Improbable Engineering](https://circleci.com/gh/improbable-eng/etcd-cluster-operator.svg?style=shield)](https://app.circleci.com/github/improbable-eng/etcd-cluster-operator/pipelines)
+This is a fork of https://github.com/improbable-eng/etcd-cluster-operator to add Helm and ARM64 support.
+The intent is to also make more breaking changes in the future.
 
 Etcd Cluster Operator is an [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator) for automating
 the creation and management of etcd inside of Kubernetes. It provides a

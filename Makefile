@@ -22,16 +22,15 @@ export BIN ?= ${CURDIR}/bin
 # Make sure BIN is on the PATH
 export PATH := $(BIN):$(PATH)
 
-GO_VERSION ?= 1.14
+GO_VERSION ?= 1.16
 # Look for a `go1.14` on the path but fall back to `go`.
 # Allows me to use `go get golang.org/dl/go1.14` without having to replace my OS
 # provided golang package.
 GO := $(or $(shell which go${GO_VERSION}),$(shell which go))
 
 # Docker image configuration
-# Docker images are published to https://quay.io/repository/improbable-eng/etcd-cluster-operator
 DOCKER_TAG ?= ${VERSION}
-DOCKER_REPO ?= quay.io/improbable-eng
+DOCKER_REPO ?= ghcr.io/meyskens
 DOCKER_IMAGES ?= controller proxy backup-agent restore-agent
 DOCKER_IMAGE_NAME_PREFIX ?= etcd-cluster-operator-
 # The Docker image for the controller-manager which will be deployed to the cluster in tests
@@ -208,13 +207,15 @@ docker-build: ## Build the all the docker images
 docker-build: $(addprefix docker-build-,$(DOCKER_IMAGES))
 
 docker-build-%: FORCE
-	docker build --target $* \
+	docker buildx build --target $* \
 		--build-arg GO_VERSION=${GO_VERSION} \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BACKUP_AGENT_IMAGE=${DOCKER_IMAGE_BACKUP_AGENT} \
 		--build-arg RESTORE_AGENT_IMAGE=${DOCKER_IMAGE_RESTORE_AGENT} \
 		--tag ${DOCKER_REPO}/${DOCKER_IMAGE_NAME_PREFIX}$*:${DOCKER_TAG} \
 		--file Dockerfile \
+		--platform "linux/amd64,linux/arm64,linux/arm" \
+		--push \
 		${CURDIR}
 FORCE:
 
