@@ -4,8 +4,6 @@
 ARG GO_VERSION=1.16
 FROM golang:${GO_VERSION}-alpine as builder
 
-RUN apk add --no-cache upx
-
 WORKDIR /workspace
 # Copy the Go Modules manifests
 COPY go.mod go.mod
@@ -41,8 +39,6 @@ RUN go build \
 RUN go build -mod=readonly "-ldflags=-s -w -X=github.com/improbable-eng/etcd-cluster-operator/version.Version=${VERSION}" -o proxy cmd/proxy/main.go
 RUN go build -mod=readonly "-ldflags=-s -w -X=github.com/improbable-eng/etcd-cluster-operator/version.Version=${VERSION}" -o backup-agent cmd/backup-agent/main.go
 RUN go build -mod=readonly "-ldflags=-s -w -X=github.com/improbable-eng/etcd-cluster-operator/version.Version=${VERSION}" -o restore-agent cmd/restore-agent/main.go
-
-RUN upx manager proxy backup-agent restore-agent
 
 #
 # IMAGE TARGETS
