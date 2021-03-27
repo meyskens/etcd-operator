@@ -44,6 +44,10 @@ type EtcdPodTemplateSpec struct {
 	// Affinity is the affinity scheduling rules to be applied to the underlying pods.
 	// +optional
 	Affinity *corev1.Affinity `json:"affinity,omitempty"`
+
+	// Env is to pass on environment variables to the pods
+	// +optional
+	Env []corev1.EnvVar `json:"env,omitempty"`
 }
 
 // EtcdPodTemplateObjectMeta supports a subset of the features of a normal ObjectMeta. In particular the ones we allow.

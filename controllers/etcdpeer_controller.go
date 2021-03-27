@@ -205,6 +205,10 @@ func defineReplicaSet(peer etcdv1alpha1.EtcdPeer, etcdRepository string, log log
 					},
 				)
 			}
+
+			if len(peer.Spec.PodTemplate.Env) > 0 {
+				etcdContainer.Env = append(etcdContainer.Env, peer.Spec.PodTemplate.Env...)
+			}
 		}
 	}
 	replicaSet := appsv1.ReplicaSet{
