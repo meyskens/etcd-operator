@@ -28,4 +28,4 @@ jobs:
       - name: Login to registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       - name: Build and push Docker image
-        run: make docker-build docker-push
+        run: make docker-push

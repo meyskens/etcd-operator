@@ -207,6 +207,21 @@ docker-build: ## Build the all the docker images
 docker-build: $(addprefix docker-build-,$(DOCKER_IMAGES))
 
 docker-build-%: FORCE
+	docker build --target $* \
+		--build-arg GO_VERSION=${GO_VERSION} \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg BACKUP_AGENT_IMAGE=${DOCKER_IMAGE_BACKUP_AGENT} \
+		--build-arg RESTORE_AGENT_IMAGE=${DOCKER_IMAGE_RESTORE_AGENT} \
+		--tag ${DOCKER_REPO}/${DOCKER_IMAGE_NAME_PREFIX}$*:${DOCKER_TAG} \
+		--file Dockerfile \
+		${CURDIR}
+FORCE:
+
+.PHONY: docker-push
+docker-push: ## Build the all the docker images
+docker-push: $(addprefix docker-push-,$(DOCKER_IMAGES))
+
+docker-push-%: FORCE
 	docker buildx build --target $* \
 		--build-arg GO_VERSION=${GO_VERSION} \
 		--build-arg VERSION=$(VERSION) \
@@ -217,14 +232,6 @@ docker-build-%: FORCE
 		--platform "linux/amd64,linux/arm64,linux/arm" \
 		--push \
 		${CURDIR}
-FORCE:
-
-.PHONY: docker-push
-docker-push: ## Push all the docker images
-docker-push: $(addprefix docker-push-,$(DOCKER_IMAGES))
-
-docker-push-%: FORCE
-	docker push ${DOCKER_REPO}/${DOCKER_IMAGE_NAME_PREFIX}$*:${DOCKER_TAG}
 FORCE:
 
 # Run the supplied make target argument in a temporary workspace and diff the results.
