@@ -1,0 +1,101 @@
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "etcd-operator.fullname" . }}
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "etcd-operator.fullname" . }}-webhook-cert
+  labels:
+{{ include "etcd-operator.labels" . | nindent 4 }}
+webhooks:
+  - clientConfig:
+      caBundle: Cg==
+      service:
+        name: webhook-service
+        namespace: system
+        path: /mutate-etcd-improbable-io-v1alpha1-etcdcluster
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1beta1"]
+    name: default.etcdclusters.etcd.improbable.io
+    rules:
+      - apiGroups:
+          - etcd.improbable.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - etcdclusters
+  - clientConfig:
+      caBundle: Cg==
+      service:
+        name: {{ include "etcd-operator.fullname" . }}-webhook
+        namespace: {{ .Release.Namespace }}
+        path: /mutate-etcd-improbable-io-v1alpha1-etcdpeer
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1beta1"]
+    name: default.etcdpeers.etcd.improbable.io
+    rules:
+      - apiGroups:
+          - etcd.improbable.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - etcdpeers
+
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "etcd-operator.fullname" . }}
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "etcd-operator.fullname" . }}-webhook-cert
+  labels:
+{{ include "etcd-operator.labels" . | nindent 4 }}
+webhooks:
+  - clientConfig:
+      caBundle: Cg==
+      service:
+        name: webhook-service
+        namespace: system
+        path: /validate-etcd-improbable-io-v1alpha1-etcdcluster
+    failurePolicy: Fail
+    name: validation.etcdclusters.etcd.improbable.io
+    sideEffects: None
+    admissionReviewVersions: ["v1beta1"]
+    rules:
+      - apiGroups:
+          - etcd.improbable.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - etcdclusters
+  - clientConfig:
+      caBundle: Cg==
+      service:
+        name: {{ include "etcd-operator.fullname" . }}-webhook
+        namespace: {{ .Release.Namespace }}
+        path: /validate-etcd-improbable-io-v1alpha1-etcdpeer
+    failurePolicy: Fail
+    name: validation.etcdpeers.etcd.improbable.io
+    sideEffects: None
+    admissionReviewVersions: ["v1beta1"]
+    rules:
+      - apiGroups:
+          - etcd.improbable.io
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - etcdpeers

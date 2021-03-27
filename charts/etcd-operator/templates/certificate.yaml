@@ -1,0 +1,23 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  namespace: {{ .Release.Namespace }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "etcd-operator.fullname" . }}-webhook
+  namespace: {{ .Release.Namespace }}
+spec:
+  commonName: {{ include "etcd-operator.fullname" . }}-webhook.{{ .Release.Namespace }}.svc
+  dnsNames:
+    - {{ include "etcd-operator.fullname" . }}-webhook.{{ .Release.Namespace }}.svc
+    - {{ include "etcd-operator.fullname" . }}-webhook.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: selfsigned-issuer
+  secretName: {{ include "etcd-operator.fullname" . }}-webhook-cert
