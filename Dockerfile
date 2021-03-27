@@ -24,7 +24,6 @@ COPY version/ version/
 COPY cmd/ cmd/
 
 ENV CGO_ENABLED=0
-ENV GOOS=linux
 ENV GO111MODULE=on
 
 # Do an initial compilation before setting the version so that there is less to
