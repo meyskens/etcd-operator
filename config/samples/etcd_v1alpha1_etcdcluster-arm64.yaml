@@ -1,0 +1,44 @@
+apiVersion: etcd.improbable.io/v1alpha1
+kind: EtcdCluster
+metadata:
+  name: etcd-arm64
+spec:
+  replicas: 3
+  version: 3.5.0-alpha.0 # multi arch containers were only added in 3.5.0
+  storage:
+    volumeClaimTemplate:
+      storageClassName: hostpath
+      resources:
+        requests:
+          storage: 1Mi
+  podTemplate:
+    env:
+      - name: ETCD_UNSUPPORTED_ARCH
+        value: arm64
+    resources:
+      requests:
+        cpu: 200m
+        memory: 200Mi
+      limits:
+        cpu: 200m
+        memory: 200Mi
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: In
+                  values:
+                    - arm64
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: etcd.improbable.io/cluster-name
+                    operator: In
+                    values:
+                      - etcd-arm64
+              topologyKey: kubernetes.io/hostname

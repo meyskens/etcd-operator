@@ -7,13 +7,13 @@ replicaCount: 1
 image:
   repository: ghcr.io/meyskens/etcd-cluster-operator-controller
   pullPolicy: IfNotPresent
-  tag: v0.2.0-34-g921ffb4
+  tag: v0.2.0-37-gd503870
 
 proxy:
   image:
     repository: ghcr.io/meyskens/etcd-cluster-operator-proxy
     pullPolicy: IfNotPresent
-    tag: v0.2.0-34-g921ffb4
+    tag: v0.2.0-37-gd503870
 
 imagePullSecrets: []
 nameOverride: ""
