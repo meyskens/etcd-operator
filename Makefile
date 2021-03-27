@@ -49,8 +49,8 @@ KIND := ${BIN}/kind-${KIND_VERSION}
 K8S_CLUSTER_NAME := etcd-e2e
 
 # controller-tools
-CONTROLLER_GEN_VERSION := 0.2.5
-CONTROLLER_GEN := ${BIN}/controller-gen-0.2.5
+CONTROLLER_GEN_VERSION := 0.5.0
+CONTROLLER_GEN := ${BIN}/controller-gen-0.5.0
 
 # Kustomize
 KUSTOMIZE_VERSION := 3.5.4
@@ -65,9 +65,6 @@ RELEASE_NOTES := docs/release-notes/${VERSION}.md
 RELEASE_MANIFEST := "release-${VERSION}.yaml"
 
 E2E_ARTIFACTS_DIRECTORY ?= /tmp/${K8S_CLUSTER_NAME}
-
-# Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true"
 
 # Limit the number of parallel end-to-end tests
 # A higher number will result in more etcd nodes being deployed in the test
@@ -179,8 +176,7 @@ verify-protobuf-lint: ## Run protobuf static checks
 .PHONY: manifests
 manifests: ## Generate manifests e.g. CRD, RBAC etc.
 manifests: ${CONTROLLER_GEN}
-	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
-
+	$(CONTROLLER_GEN) crd paths="./api/..." output:dir=./charts/etcd-operator/templates schemapatch:manifests=./charts/etcd-operator/templates
 .PHONY: fmt
 fmt: ## Run go fmt against code
 	${GO} fmt .
