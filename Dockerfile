@@ -2,9 +2,9 @@
 # BUILD ENVIRONMENT
 # -----------------
 ARG GO_VERSION=1.16
-FROM golang:${GO_VERSION} as builder
+FROM golang:${GO_VERSION}-alpine as builder
 
-RUN apt-get -y update && apt-get -y install upx
+RUN apk add --no-cache upx
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -22,9 +22,6 @@ COPY internal/ internal/
 COPY webhooks/ webhooks/
 COPY version/ version/
 COPY cmd/ cmd/
-
-ENV CGO_ENABLED=0
-ENV GO111MODULE=on
 
 # Do an initial compilation before setting the version so that there is less to
 # re-compile when the version changes
@@ -50,22 +47,19 @@ RUN upx manager proxy backup-agent restore-agent
 #
 # IMAGE TARGETS
 # -------------
-FROM gcr.io/distroless/static:nonroot as controller
+FROM alpine:3.13 as controller
 WORKDIR /
 COPY --from=builder /workspace/manager .
-USER nonroot:nonroot
 ENTRYPOINT ["/manager"]
 
-FROM gcr.io/distroless/static:nonroot as proxy
+FROM alpine:3.13 as proxy
 WORKDIR /
 COPY --from=builder /workspace/proxy .
-USER nonroot:nonroot
 ENTRYPOINT ["/proxy"]
 
-FROM gcr.io/distroless/static:nonroot as backup-agent
+FROM alpine:3.13 as backup-agent
 WORKDIR /
 COPY --from=builder /workspace/backup-agent .
-USER nonroot:nonroot
 ENTRYPOINT ["/backup-agent"]
 
 # restore-agent must run as root
