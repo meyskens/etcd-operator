@@ -11,8 +11,8 @@ webhooks:
   - clientConfig:
       caBundle: Cg==
       service:
-        name: webhook-service
-        namespace: system
+        name: {{ include "etcd-operator.fullname" . }}-webhook
+        namespace: {{ .Release.Namespace }}
         path: /mutate-etcd-improbable-io-v1alpha1-etcdcluster
     failurePolicy: Fail
     sideEffects: None
@@ -62,8 +62,8 @@ webhooks:
   - clientConfig:
       caBundle: Cg==
       service:
-        name: webhook-service
-        namespace: system
+        name: {{ include "etcd-operator.fullname" . }}-webhook
+        namespace: {{ .Release.Namespace }}
         path: /validate-etcd-improbable-io-v1alpha1-etcdcluster
     failurePolicy: Fail
     name: validation.etcdclusters.etcd.improbable.io

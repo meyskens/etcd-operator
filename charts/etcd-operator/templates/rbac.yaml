@@ -212,7 +212,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: manager-role
+  name: {{ include "etcd-operator.fullname" . }}-manager-role
 subjects:
   - kind: ServiceAccount
     name: {{ include "etcd-operator.serviceAccountName" . }}
